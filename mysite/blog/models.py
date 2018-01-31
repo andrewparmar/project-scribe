@@ -13,13 +13,14 @@ class Post(models.Model):
         ('published', 'Published'),
     )
     title = models.CharField(max_length=250)
-    body = models.TextField()
+    slug = models.SlugField(max_length=250, unique_for_date='publish')
     author = models.ForeignKey(User, related_name='blog_posts')
+    body = models.TextField()
     publish = models.DateTimeField(auto_now_add=True)
     created = models.DateTimeField(auto_now=True)
     updated = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='draft')
-    slug = models.SlugField(max_length=250, unique_for_date='publish')
+
 
     objects = models.Manager()
     published = PublishedManager()
@@ -31,7 +32,7 @@ class Post(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('blog: post_detail', args=[self.publish.year,
-                                                  self.publish.strftime('%m'),
-                                                  self.publish.strftime('%d'),
-                                                  self.slug])
+        return reverse('blog:post_detail', args=[self.publish.year,
+                                                 self.publish.strftime('%m'),
+                                                 self.publish.strftime('%d'),
+                                                 self.slug])
